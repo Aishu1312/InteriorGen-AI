@@ -1,0 +1,32 @@
+[
+  {
+    "title": "Modern Luxury Living Room",
+    "category": "Luxury",
+    "prompt": "Create an ultra realistic interior design of a luxury modern living room with large floor-to-ceiling windows overlooking mountains, warm ambient lighting, Italian marble flooring, wooden wall panels, minimal luxury furniture, indoor plants, luxury chandelier, high resolution, photorealistic, architectural visualization, 8K, cinematic, professional interior photography."
+  },
+  {
+    "title": "Scandinavian Bedroom Retreat",
+    "category": "Scandinavian",
+    "prompt": "Create an ultra realistic interior design of a Scandinavian bedroom with light wood flooring, white painted walls, minimal wooden furniture, soft natural daylight, linen textiles, indoor plants, cozy reading nook, photorealistic, architectural visualization, 8K, cinematic, professional interior photography."
+  },
+  {
+    "title": "Japanese Minimalist Studio",
+    "category": "Japanese",
+    "prompt": "Create an ultra realistic interior design of a Japanese minimalist studio apartment with tatami flooring, shoji sliding screens, low wooden furniture, natural light, indoor bonsai plants, muted earth tones, photorealistic, architectural visualization, 8K, cinematic, professional interior photography."
+  },
+  {
+    "title": "Industrial Office Cabin",
+    "category": "Office",
+    "prompt": "Create an ultra realistic interior design of an industrial style office cabin with exposed concrete walls, black steel furniture, Edison bulb lighting, large factory-style windows, wooden accents, photorealistic, architectural visualization, 8K, cinematic, professional interior photography."
+  },
+  {
+    "title": "Boho Kitchen",
+    "category": "Kitchen",
+    "prompt": "Create an ultra realistic interior design of a boho style kitchen with terracotta tile flooring, open wooden shelving, woven textiles, warm golden lighting, hanging plants, rattan bar stools, photorealistic, architectural visualization, 8K, cinematic, professional interior photography."
+  },
+  {
+    "title": "Royal Dining Room",
+    "category": "Luxury",
+    "prompt": "Create an ultra realistic interior design of a royal dining room with polished marble flooring, ornate wood paneled walls, crystal chandelier, velvet upholstered chairs, gold accents, warm ambient lighting, photorealistic, architectural visualization, 8K, cinematic, professional interior photography."
+  }
+]
