@@ -129,10 +129,24 @@ def _generate_with_huggingface(prompt: str) -> bytes:
 
     url = f"https://api-inference.huggingface.co/models/{model}"
     headers = {"Authorization": f"Bearer {api_key}"}
-    response = requests.post(url, headers=headers, json={"inputs": prompt}, timeout=60)
-    if response.status_code != 200:
-        raise RuntimeError(f"Hugging Face API error {response.status_code}: {response.text[:200]}")
-    return response.content
+    
+    # Retry loop to handle transient DNS/network errors on Streamlit Cloud
+    last_exc = None
+    for attempt in range(3):
+        try:
+            response = requests.post(url, headers=headers, json={"inputs": prompt}, timeout=60)
+            if response.status_code == 503: # Model loading
+                time.sleep(3)
+                continue
+            if response.status_code != 200:
+                raise RuntimeError(f"Hugging Face API error {response.status_code}: {response.text[:200]}")
+            return response.content
+        except requests.exceptions.RequestException as exc:
+            last_exc = exc
+            logger.warning(f"Hugging Face request failed (attempt {attempt+1}): {exc}")
+            time.sleep(2)
+            
+    raise RuntimeError(f"Hugging Face API failed after 3 attempts. Last error: {last_exc}")
 
 
 def _generate_with_stability(prompt: str) -> bytes:
