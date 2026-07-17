@@ -8,6 +8,7 @@ modular image service, and offers download / save / favorite / regenerate
 
 from __future__ import annotations
 
+import time
 import streamlit as st
 
 from services import ai_service, image_service
@@ -107,21 +108,33 @@ with preview_col:
             instructions = build_llm_refinement_instructions(options, base_prompt)
             final_prompt = ai_service.refine_prompt(base_prompt, instructions)
 
-        with st.spinner("Generating your interior visualization..."):
-            image_bytes, error_message = image_service.generate_image(final_prompt)
+        status = st.status("Generating your premium interior...", expanded=True)
+        def update_status(provider_name: str):
+            status.update(label=f"Generating your premium interior (via {provider_name})...")
+            
+        with status:
+            image_bytes, provider_name, error_message, duration = image_service.generate_image(
+                final_prompt, status_callback=update_status
+            )
+            if error_message:
+                status.update(label="Generation failed", state="error")
+                st.error(error_message)
+            elif image_bytes:
+                status.update(
+                    label=f"✨ Generated successfully via {provider_name} in {duration:.1f}s!", 
+                    state="complete"
+                )
 
-        record = {
-            "id": new_id(),
-            "timestamp": now_str(),
-            "room_type": room_type,
-            "prompt": final_prompt,
-            "image_bytes_hex": image_bytes.hex(),
-        }
-        st.session_state.last_generated = record
-        save_to_history(record)
-
-        if error_message:
-            st.warning(error_message)
+        if image_bytes:
+            record = {
+                "id": new_id(),
+                "timestamp": now_str(),
+                "room_type": room_type,
+                "prompt": final_prompt,
+                "image_bytes_hex": image_bytes.hex(),
+            }
+            st.session_state.last_generated = record
+            save_to_history(record)
 
     if st.session_state.get("last_generated"):
         record = st.session_state.last_generated
@@ -142,14 +155,27 @@ with preview_col:
             toggle_favorite(record)
             st.rerun()
         if b3.button("🔁 Regenerate", use_container_width=True):
-            with st.spinner("Regenerating..."):
-                image_bytes2, err2 = image_service.generate_image(record["prompt"])
-                new_record = {**record, "id": new_id(), "timestamp": now_str(), "image_bytes_hex": image_bytes2.hex()}
-                st.session_state.last_generated = new_record
-                save_to_history(new_record)
+            status = st.status("Regenerating your interior...", expanded=True)
+            def update_regen_status(provider_name: str):
+                status.update(label=f"Regenerating via {provider_name}...")
+                
+            with status:
+                image_bytes2, provider_name, err2, duration = image_service.generate_image(
+                    record["prompt"], status_callback=update_regen_status
+                )
                 if err2:
-                    st.warning(err2)
-                st.rerun()
+                    status.update(label="Regeneration failed", state="error")
+                    st.error(err2)
+                elif image_bytes2:
+                    status.update(
+                        label=f"✨ Regenerated successfully via {provider_name} in {duration:.1f}s!", 
+                        state="complete"
+                    )
+                    new_record = {**record, "id": new_id(), "timestamp": now_str(), "image_bytes_hex": image_bytes2.hex()}
+                    st.session_state.last_generated = new_record
+                    save_to_history(new_record)
+                    time.sleep(1) # Give the user a moment to see the success message
+                    st.rerun()
         b4.link_button("📤 Share", "https://github.com/", use_container_width=True)
 
         st.markdown("#### Before / After")
