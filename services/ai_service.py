@@ -32,12 +32,17 @@ SYSTEM_PROMPT_ASSISTANT = (
 
 
 def _get_api_key() -> str | None:
-    try:
-        return st.secrets.get("GROQ_API_KEY")  # type: ignore[union-attr]
-    except Exception:  # secrets.toml may not exist locally
-        pass
     import os
-
+    
+    # Check Streamlit secrets first
+    try:
+        key = st.secrets.get("GROQ_API_KEY")
+        if key:
+            return key
+    except Exception:
+        pass
+        
+    # Fallback to environment variables
     return os.environ.get("GROQ_API_KEY")
 
 
