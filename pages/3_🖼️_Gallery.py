@@ -45,7 +45,11 @@ cols = st.columns(num_cols)
 for idx, item in enumerate(filtered):
     with cols[idx % num_cols]:
         with st.spinner(f"Loading {item['title']}..."):
-            image_bytes, _ = image_service.generate_image(item["prompt"])
+            image_bytes, _, err, _ = image_service.generate_image(item["prompt"])
+        
+        if err:
+            st.error(err)
+            continue
         st.image(image_bytes, use_container_width=True)
         st.markdown(f"**{item['title']}**")
         st.markdown(f'<span class="badge badge-purple">{item["category"]}</span>', unsafe_allow_html=True)
