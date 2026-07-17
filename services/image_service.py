@@ -214,15 +214,37 @@ class OpenAIProvider(BaseProvider):
             raise NetworkError(f"OpenAI generation failed: {e}")
 
 
+class PollinationsProvider(BaseProvider):
+    @property
+    def is_configured(self) -> bool:
+        # Pollinations is completely free and requires no API key!
+        # This acts as the ultimate fallback if all other configured providers fail.
+        return True
+
+    def _generate(self, prompt: str) -> bytes:
+        import urllib.parse
+        encoded = urllib.parse.quote(prompt)
+        url = f"https://image.pollinations.ai/prompt/{encoded}?width=1024&height=1024&nologo=true&model=flux"
+        
+        try:
+            response = requests.get(url, timeout=45)
+            response.raise_for_status()
+            return response.content
+        except requests.exceptions.RequestException as e:
+            raise NetworkError(f"Pollinations network error: {e}")
+
+
 class ProviderManager:
     def __init__(self):
-        # Priority order
+        # Priority order. Pollinations is the ultimate fallback since it requires no key
+        # and bypasses the Hugging Face DNS issues completely.
         self.providers: list[BaseProvider] = [
             FalProvider(),
             ReplicateProvider(),
             HuggingFaceProvider(),
             StabilityProvider(),
             OpenAIProvider(),
+            PollinationsProvider(),
         ]
 
     def generate(
