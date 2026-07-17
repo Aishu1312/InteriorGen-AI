@@ -63,12 +63,15 @@ def _get_client():
     api_key = _get_api_key()
     if not api_key:
         return None
+        
+    api_key = api_key.strip()
     try:
         from groq import Groq
 
         return Groq(api_key=api_key)
     except Exception as exc:  # pragma: no cover - defensive
         logger.error("Failed to initialize Groq client: %s", exc)
+        st.error(f"Failed to initialize Groq client: {exc}")
         return None
 
 
