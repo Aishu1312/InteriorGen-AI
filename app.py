@@ -10,6 +10,9 @@ shows them in the sidebar navigation.
 from __future__ import annotations
 
 import streamlit as st
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from utils.helpers import init_session_state
 from utils.theme import app_footer, configure_page, glass_card, section_header

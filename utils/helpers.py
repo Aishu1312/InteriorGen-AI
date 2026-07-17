@@ -16,8 +16,10 @@ import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import Any
-
 import streamlit as st
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger = logging.getLogger("ai_interior_designer")
 logging.basicConfig(level=logging.INFO)
